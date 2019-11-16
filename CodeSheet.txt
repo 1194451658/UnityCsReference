@@ -1,0 +1,4 @@
+* 类清单类表
+
+* UnityEditor空间
+* CustomEditorAttributes						记录标记了[CustomEditor][CanEditMultipleObjects]标签的类的数据

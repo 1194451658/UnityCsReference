@@ -19,6 +19,7 @@ namespace UnityEditor
 {
     public class CustomEditor : System.Attribute
     {
+        // 构造函数
         public CustomEditor(System.Type inspectedType)
         {
             if (inspectedType == null)
@@ -27,6 +28,7 @@ namespace UnityEditor
             m_EditorForChildClasses = false;
         }
 
+        // 构造函数
         public CustomEditor(System.Type inspectedType, bool editorForChildClasses)
         {
             if (inspectedType == null)
@@ -35,9 +37,13 @@ namespace UnityEditor
             m_EditorForChildClasses = editorForChildClasses;
         }
 
+        // 控制此类显示的类
         internal Type m_InspectedType;
+
+        // Q: ??
         internal bool m_EditorForChildClasses;
 
+        // Q: ??
         public bool isFallback { get; set; }
     }
 }
