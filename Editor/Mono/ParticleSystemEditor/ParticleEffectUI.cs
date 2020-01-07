@@ -761,6 +761,7 @@ namespace UnityEditor
             m_Owner.Repaint();
         }
 
+        // 显示Play按钮
         internal void PlayStopGUI()
         {
             if (s_Texts == null)
@@ -790,12 +791,14 @@ namespace UnityEditor
                         }
                     }
 
+                    // Restart重新开始按钮
                     if (GUILayout.Button(s_Texts.restart, "ButtonMid"))
                     {
                         Stop();
                         Play();
                     }
 
+                    // Stop按钮
                     if (GUILayout.Button(s_Texts.stop, "ButtonRight"))
                     {
                         Stop();
