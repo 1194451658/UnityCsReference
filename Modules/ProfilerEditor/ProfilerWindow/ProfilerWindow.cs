@@ -1262,10 +1262,18 @@ namespace UnityEditor
             EditorGUIUtility.ExitGUI();
         }
 
+        // 加载保存的Profiling数据
         void LoadProfilingData(bool keepExistingData)
         {
+            // 最近使用的加载保存路径
             string recent = EditorPrefs.GetString(kProfilerRecentSaveLoadProfilePath);
-            string selected = EditorUtility.OpenFilePanelWithFilters(Styles.loadWindowTitle.text, recent, Styles.loadProfilingDataFileFilters);
+
+            // 选择文件窗口
+            string selected = EditorUtility.OpenFilePanelWithFilters(
+                Styles.loadWindowTitle.text,
+                recent,
+                Styles.loadProfilingDataFileFilters     // 过滤.raw文件
+            );
 
             if (selected.Length != 0)
             {
