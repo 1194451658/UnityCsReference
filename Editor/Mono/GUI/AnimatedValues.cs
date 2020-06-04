@@ -107,7 +107,7 @@ namespace UnityEditor.AnimatedValues
 
         //  返回，根据m_LerpPosition得到的值, 
         //  * 从1到0
-        //  * 凸起来的
+        //  * 凸变化速率
         protected float lerpPosition
         {
             get
@@ -121,7 +121,8 @@ namespace UnityEditor.AnimatedValues
 
                 // result: 
                 //  * 从1到0
-                //  * 凸起来的
+                //  * v*v*v*v: 凹变化速率
+                //  * 1.0 - v*v*v*v: 凸变化速率
                 var result = 1.0 - v * v * v * v;
                 return (float)result;
             }
@@ -185,6 +186,9 @@ namespace UnityEditor.AnimatedValues
         protected abstract T GetValue();
     }
 
+    //
+    // float数值的变化
+    //
     [Serializable]
     public class AnimFloat : BaseAnimValue<float>
     {
@@ -200,11 +204,15 @@ namespace UnityEditor.AnimatedValues
 
         protected override float GetValue()
         {
+            // lerpPosition: 
+            //  * 从1变到0
+            //  * 凸变化速率
             m_Value = Mathf.Lerp(start, target, lerpPosition);
             return m_Value;
         }
     }
 
+    // Vector3的速率变化
     [Serializable]
     public class AnimVector3 : BaseAnimValue<Vector3>
     {
@@ -263,11 +271,20 @@ namespace UnityEditor.AnimatedValues
 
         protected override bool GetValue()
         {
+            // target: 
+            //  * true:
+            //      * 就是变到true
+            //      * 就是从0开始，要变到1
+            //  * false:
+            //      * 就是要变到false
+            //      * 就是从1开始，变到0
             float startVal = target ? 0f : 1f;
             float end = 1f - startVal;
 
             m_Value = Mathf.Lerp(startVal, end, lerpPosition);
 
+            // 值在0-1变化过程中，
+            // >=0.5阈值，就是true
             return m_Value > .5f;
         }
 
