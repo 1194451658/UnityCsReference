@@ -635,12 +635,16 @@ namespace UnityEditor
         {
             bool enabled = GUI.enabled;
             GUI.enabled = true; // we don't want to disable the expand behavior
+
+            // 垂直排版
             EditorGUILayout.BeginVertical(Styles.categoryBox);
             Rect r = GUILayoutUtility.GetRect(20, 18); r.x += 3; r.width += 6;
             EditorGUI.BeginChangeCheck();
 
             // 使用的是一个Toggle
             //  * 更改了样式
+
+            // m_SelectedSection: Project Setting里的Player界面，只能有一个打开
             bool expanded = GUI.Toggle(r, m_SelectedSection.value == nr, header, EditorStyles.inspectorTitlebarText);
             if (EditorGUI.EndChangeCheck())
             {
@@ -650,10 +654,11 @@ namespace UnityEditor
             m_SectionAnimators[nr].target = expanded;
             GUI.enabled = enabled;
 
-            // 使用FadeGroup，进行动画
+            // FadeGroup: 有大小，可以进行动画的区域
             return EditorGUILayout.BeginFadeGroup(m_SectionAnimators[nr].faded);
         }
 
+        // 结束BeginSettingsBox中，开始的Begin*
         public void EndSettingsBox()
         {
             EditorGUILayout.EndFadeGroup();
