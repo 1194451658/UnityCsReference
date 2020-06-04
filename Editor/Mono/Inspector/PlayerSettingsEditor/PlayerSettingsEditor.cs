@@ -530,6 +530,10 @@ namespace UnityEditor
             }
         }
 
+        // 画GUI
+        // Q: 这里为什么用的是Inspector? 怎么操作的？
+        //  * 是保存在ProjectSettings下的*.asset文件
+        //  * 保存在外部的*.asset文件，也能解析？！
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
@@ -558,6 +562,8 @@ namespace UnityEditor
                 // If we don't do this, the resolution width/height value will not update correctly when they have the focus
                 GUI.FocusControl("");
             }
+
+            // Settings for ...
             GUILayout.Label(string.Format(L10n.Tr("Settings for {0}"), validPlatforms[selectedPlatform].title.text));
 
             // Compensate so settings inside boxes line up with settings at the top, though keep a minimum of 150.
@@ -586,8 +592,11 @@ namespace UnityEditor
 
         private void CommonSettings()
         {
+            // Compay Name
             EditorGUILayout.PropertyField(m_CompanyName);
+            // Product Name
             EditorGUILayout.PropertyField(m_ProductName);
+            // Version
             EditorGUILayout.PropertyField(m_ApplicationBundleVersion, EditorGUIUtility.TrTextContent("Version"));
             EditorGUILayout.Space();
 
@@ -629,6 +638,9 @@ namespace UnityEditor
             EditorGUILayout.BeginVertical(Styles.categoryBox);
             Rect r = GUILayoutUtility.GetRect(20, 18); r.x += 3; r.width += 6;
             EditorGUI.BeginChangeCheck();
+
+            // 使用的是一个Toggle
+            //  * 更改了样式
             bool expanded = GUI.Toggle(r, m_SelectedSection.value == nr, header, EditorStyles.inspectorTitlebarText);
             if (EditorGUI.EndChangeCheck())
             {
@@ -637,6 +649,8 @@ namespace UnityEditor
             }
             m_SectionAnimators[nr].target = expanded;
             GUI.enabled = enabled;
+
+            // 使用FadeGroup，进行动画
             return EditorGUILayout.BeginFadeGroup(m_SectionAnimators[nr].faded);
         }
 
@@ -693,6 +707,7 @@ namespace UnityEditor
                     else
                     {
                         // Get icons and icon sizes for selected platform (or default)
+                        // PlayerSettings: 
                         Texture2D[] icons = PlayerSettings.GetAllIconsForPlatform(platformName);
                         int[] widths = PlayerSettings.GetIconWidthsOfAllKindsForPlatform(platformName);
                         int[] heights = PlayerSettings.GetIconHeightsOfAllKindsForPlatform(platformName);
@@ -819,6 +834,7 @@ namespace UnityEditor
             return targetGroup == BuildTargetGroup.Android;
         }
 
+        // 显示"Resolution and Presentation"
         public void ResolutionSectionGUI(BuildTargetGroup targetGroup, ISettingEditorExtension settingsExtension, int sectionIndex = 0)
         {
             if (BeginSettingsBox(sectionIndex, SettingsContent.resolutionPresentationTitle))

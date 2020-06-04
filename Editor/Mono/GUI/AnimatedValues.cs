@@ -27,19 +27,27 @@ namespace UnityEditor.AnimatedValues
 
         protected BaseAnimValue(T value)
         {
+            // 开始值
             m_Start = value;
+            // 结束值
             m_Target = value;
+
+            // 值被更改回调
             valueChanged = new UnityEvent();
         }
 
         protected BaseAnimValue(T value, UnityAction callback)
         {
+            // 开始值
             m_Start = value;
+            // 结束值
             m_Target = value;
+            // 值被更改回调
             valueChanged = new UnityEvent();
             valueChanged.AddListener(callback);
         }
 
+        // 把值val，限制在[min, max]之内
         private static T2 Clamp<T2>(T2 val, T2 min, T2 max) where T2 : IComparable<T2>
         {
             if (val.CompareTo(min) < 0) return min;
@@ -47,33 +55,48 @@ namespace UnityEditor.AnimatedValues
             return val;
         }
 
+        // 开始值动画
+        // newStart: 开始值
+        // newTarget: 结束值
         protected void BeginAnimating(T newTarget, T newStart)
         {
             m_Start = newStart;
             m_Target = newTarget;
-
+            
+            // 直接，自己使用EditorApplication.update，进行更新
             EditorApplication.update += Update;
+
+            // 标记动画开始
             m_Animating = true;
             m_LastTime = EditorApplication.timeSinceStartup;
+
+            // 当前
             m_LerpPosition = 0;
         }
 
+        // 是否正在动画中
         public bool isAnimating
         {
             get { return m_Animating; }
         }
 
+        // EditorApplication.update
         private void Update()
         {
             if (!m_Animating)
                 return;
 
             // update the lerpPosition
+            // 将m_LerpPosition从0开始，按照速度speed，加速到1
             UpdateLerpPosition();
 
+            // 值更改回调
             if (valueChanged != null)
                 valueChanged.Invoke();
 
+            // 变量lerpPosition:
+            //  * 从1到0
+            //  * 凸起来的
             if (lerpPosition >= 1f)
             {
                 m_Animating = false;
@@ -81,25 +104,45 @@ namespace UnityEditor.AnimatedValues
             }
         }
 
+
+        //  返回，根据m_LerpPosition得到的值, 
+        //  * 从1到0
+        //  * 凸起来的
         protected float lerpPosition
         {
             get
             {
+                // m_LerpPosition: 
+                //  * 从0到1
+                // v: 
+                //  * 从1到0；
+                //  * 线性
                 var v = 1.0 - m_LerpPosition;
+
+                // result: 
+                //  * 从1到0
+                //  * 凸起来的
                 var result = 1.0 - v * v * v * v;
                 return (float)result;
             }
         }
 
+        // 跟新m_LerpPosition的值
+        // 将m_LerpPosition从0开始，按照速度speed，加速到1
         private void UpdateLerpPosition()
         {
             double nowTime = EditorApplication.timeSinceStartup;
+
+            // Update()经过的时间
             double deltaTime = nowTime - m_LastTime;
 
+            // m_LerpPosition从0开始，按照速度speed，加速到1
             m_LerpPosition = Clamp(m_LerpPosition + (deltaTime * speed), 0.0, 1.0);
             m_LastTime = nowTime;
         }
 
+        // 结束动画
+        //  * 直接设置值到newValue
         protected void StopAnim(T newValue)
         {
             // If the new value is different, or we might be in the middle of a fade, we need to refresh.
