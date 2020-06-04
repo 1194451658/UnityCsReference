@@ -126,13 +126,26 @@ namespace UnityEditorInternal.Profiling
 
             var cpuHierarchyColumns = new[]
             {
-                ProfilerColumn.FunctionName, ProfilerColumn.TotalPercent, ProfilerColumn.SelfPercent, ProfilerColumn.Calls,
-                ProfilerColumn.GCMemory, ProfilerColumn.TotalTime, ProfilerColumn.SelfTime, ProfilerColumn.WarningCount
+                ProfilerColumn.FunctionName,        // 0
+                ProfilerColumn.TotalPercent,        // 1
+                ProfilerColumn.SelfPercent,         // 2
+                ProfilerColumn.Calls,               // 3
+                ProfilerColumn.GCMemory,            // 4
+                ProfilerColumn.TotalTime,           // 5
+                ProfilerColumn.SelfTime,            // 6
+                ProfilerColumn.WarningCount         // 12
             };
+
+            // 
             var gpuHierarchyColumns = new[]
             {
-                ProfilerColumn.FunctionName, ProfilerColumn.TotalGPUPercent, ProfilerColumn.DrawCalls, ProfilerColumn.TotalGPUTime
+                ProfilerColumn.FunctionName,        // 0
+                ProfilerColumn.TotalGPUPercent,     // 10
+                ProfilerColumn.DrawCalls,           // 7
+                ProfilerColumn.TotalGPUTime         // 8
             };
+
+            // 判断显示cpu还是gpu
             var profilerColumns = gpuView ? gpuHierarchyColumns : cpuHierarchyColumns;
             var defaultSortColumn = gpuView ? ProfilerColumn.TotalGPUTime : ProfilerColumn.TotalTime;
 
@@ -239,6 +252,7 @@ namespace UnityEditorInternal.Profiling
             return state;
         }
 
+        // 获取Hierarchy视图的列名称
         static string GetProfilerColumnName(ProfilerColumn column)
         {
             switch (column)

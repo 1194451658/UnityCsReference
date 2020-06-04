@@ -40,16 +40,19 @@ abstract class BaseExposedPropertyDrawer : UnityEditor.PropertyDrawer
             kDropDownStyle = "ShurikenDropdown";
     }
 
+    // 是默认值，GUID，还是名称
     static ExposedPropertyMode GetExposedPropertyMode(string propertyName)
     {
         if (string.IsNullOrEmpty(propertyName))
             return ExposedPropertyMode.DefaultValue;
         else
         {
+            // 尝试，是否是GUID
             GUID guid;
             if (GUID.TryParse(propertyName, out guid))
                 return ExposedPropertyMode.NamedGUID;
             else
+                // 保存的是名称
                 return ExposedPropertyMode.Named;
         }
     }
@@ -74,7 +77,10 @@ abstract class BaseExposedPropertyDrawer : UnityEditor.PropertyDrawer
     {
         SerializedProperty defaultValue = prop.FindPropertyRelative("defaultValue");
         SerializedProperty exposedName = prop.FindPropertyRelative("exposedName");
+
         var exposedNameStr = exposedName.stringValue;
+
+        // 是默认值，GUID，还是名称
         var propertyMode = GetExposedPropertyMode(exposedNameStr);
 
         Rect propertyFieldPosition = position;
