@@ -133,6 +133,7 @@ namespace UnityEditor
         static internal Texture2D iconInfoSmall, iconWarnSmall, iconErrorSmall;
         static internal Texture2D iconInfoMono, iconWarnMono, iconErrorMono;
 
+        // line vertical height ?
         int ms_LVHeight = 0;
 
         class ConsoleAttachToPlayerState : GeneralConnectionState
@@ -247,6 +248,7 @@ namespace UnityEditor
             }
         }
 
+        // 加载图标
         static internal void LoadIcons()
         {
             if (ms_LoadedIcons)
@@ -523,6 +525,8 @@ namespace UnityEditor
         void OnGUI()
         {
             Event e = Event.current;
+
+            // 加载图标
             LoadIcons();
 
             if (!m_HasUpdatedGuiStyles)
@@ -534,6 +538,7 @@ namespace UnityEditor
 
             GUILayout.BeginHorizontal(Constants.Toolbar);
 
+            // Clear按钮
             if (GUILayout.Button(Constants.ClearLabel, Constants.MiniButton))
             {
                 LogEntries.Clear();
@@ -542,6 +547,7 @@ namespace UnityEditor
 
             int currCount = LogEntries.GetCount();
 
+            // 自动滚动到底部？
             if (m_ListView.totalRows != currCount && m_ListView.totalRows > 0)
             {
                 // scroll bar was at the bottom?
@@ -553,6 +559,7 @@ namespace UnityEditor
 
             EditorGUILayout.Space();
 
+            // Collapse按钮
             bool wasCollapsed = HasFlag(ConsoleFlags.Collapse);
             SetFlag(ConsoleFlags.Collapse, GUILayout.Toggle(wasCollapsed, Constants.CollapseLabel, Constants.MiniButton));
 
@@ -566,6 +573,7 @@ namespace UnityEditor
                 m_ListView.scrollPos.y = LogEntries.GetCount() * RowHeight;
             }
 
+            // Clear On Play按钮
             SetFlag(ConsoleFlags.ClearOnPlay, GUILayout.Toggle(HasFlag(ConsoleFlags.ClearOnPlay), Constants.ClearOnPlayLabel, Constants.MiniButton));
             SetFlag(ConsoleFlags.ErrorPause, GUILayout.Toggle(HasFlag(ConsoleFlags.ErrorPause), Constants.ErrorPauseLabel, Constants.MiniButton));
 
@@ -576,15 +584,22 @@ namespace UnityEditor
             if (m_DevBuild)
             {
                 GUILayout.FlexibleSpace();
+                // stop for asset按钮
                 SetFlag(ConsoleFlags.StopForAssert, GUILayout.Toggle(HasFlag(ConsoleFlags.StopForAssert), Constants.StopForAssertLabel, Constants.MiniButton));
+                // stop for error按钮
                 SetFlag(ConsoleFlags.StopForError, GUILayout.Toggle(HasFlag(ConsoleFlags.StopForError), Constants.StopForErrorLabel, Constants.MiniButton));
             }
 
             GUILayout.FlexibleSpace();
 
+            //  此版本，还没有搜索栏！
+
+            // 获取错误日志个数
             int errorCount = 0, warningCount = 0, logCount = 0;
             LogEntries.GetCountsByType(ref errorCount, ref warningCount, ref logCount);
             EditorGUI.BeginChangeCheck();
+
+            // 开启，Log, Warning, Error的Toggle按钮
             bool setLogFlag = GUILayout.Toggle(HasFlag(ConsoleFlags.LogLevelLog), new GUIContent((logCount <= 999 ? logCount.ToString() : "999+"), logCount > 0 ? iconInfoSmall : iconInfoMono), Constants.MiniButton);
             bool setWarningFlag = GUILayout.Toggle(HasFlag(ConsoleFlags.LogLevelWarning), new GUIContent((warningCount <= 999 ? warningCount.ToString() : "999+"), warningCount > 0 ? iconWarnSmall : iconWarnMono), Constants.MiniButton);
             bool setErrorFlag = GUILayout.Toggle(HasFlag(ConsoleFlags.LogLevelError), new GUIContent((errorCount <= 999 ? errorCount.ToString() : "999+"), errorCount > 0 ? iconErrorSmall : iconErrorMono), Constants.MiniButton);
@@ -598,6 +613,7 @@ namespace UnityEditor
 
             GUILayout.EndHorizontal();
 
+            // Q: ??这个是？
             SplitterGUILayout.BeginVerticalSplit(spl);
             int rowHeight = RowHeight;
             EditorGUIUtility.SetIconSize(new Vector2(rowHeight, rowHeight));
@@ -611,6 +627,8 @@ namespace UnityEditor
                 int selectedRow = -1;
                 bool openSelectedItem = false;
                 bool collapsed = HasFlag(ConsoleFlags.Collapse);
+
+                // List VIew
                 foreach (ListViewElement el in ListViewGUI.ListView(m_ListView, Constants.Box))
                 {
                     if (e.type == EventType.MouseDown && e.button == 0 && el.position.Contains(e.mousePosition))
@@ -638,6 +656,7 @@ namespace UnityEditor
                         GUIStyle errorModeStyle = GetStyleForErrorMode(mode, false, Constants.LogStyleLineCount == 1);
                         errorModeStyle.Draw(el.position, tempContent, id, m_ListView.row == el.row);
 
+                        // 是否Collapse
                         if (collapsed)
                         {
                             Rect badgeRect = el.position;
